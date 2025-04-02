@@ -55,7 +55,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "django_browser_reload.middleware.BrowserReloadMiddleware"
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
 ]
 
 ROOT_URLCONF = 'blog_project.urls'
@@ -98,16 +100,40 @@ WSGI_APPLICATION = 'blog_project.wsgi.application'
 #         'PORT': '3306',
 #     }
 # }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'railway',
+#         'USER': 'root',
+#         'PASSWORD': 'UHyahywNFAVgcedDLcKDbHmDDERpqyda',
+#         'HOST': 'shortline.proxy.rlwy.net',
+#         'PORT': '34668',
+#     }
+# }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'blog_db_0tjs',
+#         'USER': 'blog_db_0tjs_user',
+#         'PASSWORD': 'GzvCe14bJwipG1rApjGSxDBQIvKLYWQA',
+#         'HOST': 'dpg-cvmmaobuibrs73bjincg-a.singapore-postgres.render.com',
+#         'PORT': '5432',  # Default PostgreSQL port
+#     }
+# }
+
+import os
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'railway',
-        'USER': 'root',
-        'PASSWORD': 'UHyahywNFAVgcedDLcKDbHmDDERpqyda',
-        'HOST': 'shortline.proxy.rlwy.net',
-        'PORT': '34668',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DATABASE_NAME', 'blog_db_0tjs'),  # Default value is your database name
+        'USER': os.getenv('DATABASE_USER', 'blog_db_0tjs_user'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'GzvCe14bJwipG1rApjGSxDBQIvKLYWQA'),
+        'HOST': os.getenv('DATABASE_HOST', 'dpg-cvmmaobuibrs73bjincg-a.singapore-postgres.render.com'),
+        'PORT': os.getenv('DATABASE_PORT', '5432'),
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -151,6 +177,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # MEDIA_ROOT = BASE_DIR / 'media'
 # Media files (if you need image uploads)
 # MEDIA_URL = "/media/"
