@@ -1,0 +1,101 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+
+    <!-- Blog Post Title -->
+    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">{{ post.title }}</h1>
+
+    <!-- View Count -->
+    <p class="text-gray-500 dark:text-gray-400 mb-4">👀 Views: {{ post.views }}</p>
+
+    <!-- Blog Image -->
+    {% if post.image and post.image.url %}
+        <img class="w-full h-64 object-cover rounded-lg shadow-lg mt-4 mb-4" src="{{ post.image.url }}" alt="{{ post.title }}">
+    {% else %}
+        <img class="w-full h-64 object-cover rounded-lg shadow-lg mt-4 mb-4" src="{% static 'ai.jpg' %}" alt="Default Image">
+    {% endif %}
+
+    <!-- Blog Content -->
+    <p class="mt-4 text-lg text-gray-700 dark:text-gray-300">{{ post.content }}</p>
+
+    <!-- Author Info -->
+    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">✍️ Posted by {{ post.author }} on {{ post.created_at }}</p>
+
+    <!-- Like Button -->
+    <div class="mt-6">
+        <button id="like-btn" data-post-id="{{ post.id }}" class="relative inline-flex items-center justify-center p-2 mb-4 text-sm font-medium text-gray-900 rounded-lg bg-gradient-to-br from-green-400 to-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 dark:text-white">
+            <span class="relative px-4 py-2.5 bg-white dark:bg-gray-900 rounded-md">
+                👍 Like (<span id="like-count">{{ post.likes.count }}</span>)
+            </span>
+        </button>
+    </div>
+
+    <!-- Edit & Delete Buttons (Only for Author) -->
+    {% if post.author == user %}
+        <div class="mt-4 flex space-x-4">
+            <a href="{% url 'blog_update' post.id %}" class="btn btn-cyan">
+                ✏️ Edit
+            </a>
+            <a href="{% url 'delete_blog' post.id %}" class="btn btn-pink">
+                🗑️ Delete
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- Share Buttons -->
+    <div class="mt-6">
+        <p class="text-lg font-semibold">🔗 Share this post:</p>
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="text-blue-600 hover:underline">Facebook</a> |
+        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title }}" target="_blank" class="text-blue-400 hover:underline">Twitter</a> |
+        <a href="https://api.whatsapp.com/send?text={{ request.build_absolute_uri }}" target="_blank" class="text-green-500 hover:underline">WhatsApp</a>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="mt-8">
+        <h3 class="text-2xl font-semibold">💬 Comments</h3>
+        {% for comment in comments %}
+            <div class="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md">
+                <p class="font-semibold text-gray-900 dark:text-gray-200">{{ comment.user }}</p>
+                <p class="text-gray-700 dark:text-gray-300">{{ comment.content }}</p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ comment.created_at }}</p>
+            </div>
+        {% empty %}
+            <p class="text-gray-500">No comments yet.</p>
+        {% endfor %}
+
+        <!-- Comment Form -->
+        {% if user.is_authenticated %}
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="relative inline-flex items-center justify-center p-2 text-sm font-medium text-gray-900 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-purple-600 dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800">
+                    <span class="relative px-4 py-2.5 bg-white dark:bg-gray-900 rounded-md">
+                        ➕ Add Comment
+                    </span>
+                </button>
+            </form>
+        {% else %}
+            <p class="mt-4 text-gray-500">You must be logged in to add a comment.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- Like Button JavaScript -->
+<script>
+document.getElementById("like-btn").addEventListener("click", function() {
+    var postId = this.getAttribute("data-post-id");
+
+    fetch(`/like/${postId}/`, {
+        method: "POST",
+        headers: {"X-CSRFToken": "{{ csrf_token }}" }
+    }).then(response => response.json())
+    .then(data => {
+        document.getElementById("like-count").innerText = data.likes;
+    });
+});
+</script>
+
+{% endblock %}
