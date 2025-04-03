@@ -1,25 +1,23 @@
 {% extends "layout.html" %}
 {% load static %}
 {% block content %}
-<form method ="post" action="{% url "create" %}">
+<form method="post" action="{% url 'create' %}">
     {% csrf_token %}
     <button class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
         <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
         Add a New Blog
         </span>
-        </button>
+    </button>
 </form>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for post in posts %}
         <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-            <a href="{% url 'blog_detail' post.id %}">
-                {% if post.image and post.image.url %}
+            {% comment %} <a href="{% url 'blog_detail' post.id %}">
+                {% if post.image %}
                     <img class="rounded-t-lg w-full h-48 object-cover" src="{{ post.image.url }}" alt="{{ post.title }}">
-                {% else %}
-                    <img class="rounded-t-lg w-full h-48 object-cover" src="{% static 'ai.jpg' %}" alt="Default Image">
                 {% endif %}
-            </a>
+            </a> {% endcomment %}
             <div class="p-5">
                 <a href="{% url 'blog_detail' post.id %}">
                     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ post.title }}</h5>
@@ -61,9 +59,4 @@
         <p>No posts available yet.</p>
     {% endfor %}
 </div>
-
-
-
-
-
 {% endblock content %}

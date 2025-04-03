@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_browser_reload',
     'theme',
     'widget_tweaks',
+   
 
 ]
 TAILWIND_APP_NAME= 'theme'
@@ -135,6 +136,30 @@ DATABASES = {
 }
 
 
+
+
+
+
+# Load Cloudinary credentials from CLOUDINARY_URL
+import os
+# CLOUDINARY_URL = "cloudinary://618732351321449:S67Boj3W_xCj2jEPPEzHDM4jlZM@dbvrylgsl"
+# cloudinary.config(
+#     cloud_name="dbvrylgsl",  # Replace with your Cloudinary Cloud Name
+#     api_key="618732351321449",  # Replace with your API Key
+#     api_secret="S67Boj3W_xCj2jEPPEzHDM4jlZM"  # Replace with your API Secret
+# )
+
+# import environ
+# env = environ.Env()
+# environ.Env.read_env()
+
+# CLOUDINARY_URL = env("CLOUDINARY_URL")
+
+
+# Use Cloudinary for media storage
+DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -172,12 +197,12 @@ LOGOUT_REDIRECT_URL ='/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # MEDIA_ROOT = BASE_DIR / 'media'
 # Media files (if you need image uploads)
 # MEDIA_URL = "/media/"
@@ -186,10 +211,11 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 from pathlib import Path
 
 # Ensure BASE_DIR is defined before using it
-BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_ROOT = BASE_DIR / "media"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 

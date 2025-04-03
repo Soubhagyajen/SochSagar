@@ -17,35 +17,61 @@
     <!-- Dark Mode Toggle Button -->
   
 
-    <nav class="p-4 bg-gray-100 dark:bg-gray-800 flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-black dark:text-white">SochSagar </h1>
+    <nav class="p-4 bg-gray-100 dark:bg-gray-800">
+        <div class="max-w-screen-xl mx-auto flex justify-between items-center">
+            {% comment %} <a href="{% url 'blog_list' %}">
+                <img src="{% static 'images/logo.png' %}" alt="SochSagar Logo" class="h-1 w-auto max-w-[150px]">
+            </a> {% endcomment %}
+            <h1 class="text-2xl font-bold text-teal-400">SochSagar</h1>
+            
+            <div class="hidden md:flex items-center space-x-4">
+                <a href="{% url 'blog_list' %}" class="text-black dark:text-white hover:underline">Home</a>
+                <a href="{% url 'about' %}" class="text-black dark:text-white hover:underline">About</a>
         
-        <div class="flex items-center space-x-4">
-            <a href="{% url 'blog_list' %}" class="text-black dark:text-white hover:underline">Home</a>
-            <a href="{% url 'about' %}" class="text-black dark:text-white hover:underline">about</a>
-    
+                {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800">
+                        <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
+                            Logout
+                        </span>
+                    </button>
+                </form>
+                    <span class="text-gray-600 dark:text-gray-300">Hello, {{ user.username }}</span>
+                {% else %}
+                    <a href="{% url 'login' %}" class="text-blue-600 hover:underline">Login</a>
+                    <a href="{% url 'register' %}" class="text-green-600 hover:underline">Register</a>
+                {% endif %}
+                
+                <button onclick="toggleDarkMode()" class="p-2 bg-gray-300 dark:bg-gray-700 rounded">
+                    🌙 Toggle Dark Mode
+                </button>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden flex items-center">
+                <button onclick="toggleMobileMenu()" class="text-white bg-gray-800 p-2 rounded-md">
+                    ☰
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="md:hidden hidden bg-gray-800 text-white space-y-4 p-4">
+            <a href="{% url 'blog_list' %}" class="hover:underline">Home</a>
+            <a href="{% url 'about' %}" class="hover:underline">About</a>
             {% if user.is_authenticated %}
             <form method="POST" action="{% url 'logout' %}">
                 {% csrf_token %}
-                {% comment %} <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
                     Logout
-                </button> {% endcomment %}
-                <button type="submit" class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800">
-                    <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
-                        logout
-                    </span>
                 </button>
             </form>
-            
-                <span class="text-gray-600 dark:text-gray-300">Hello, {{ user.username }}</span>
+            <span class="text-gray-600 dark:text-gray-300">Hello, {{ user.username }}</span>
             {% else %}
                 <a href="{% url 'login' %}" class="text-blue-600 hover:underline">Login</a>
                 <a href="{% url 'register' %}" class="text-green-600 hover:underline">Register</a>
             {% endif %}
-            
-            <button onclick="toggleDarkMode()" class="p-2 bg-gray-300 dark:bg-gray-700 rounded">
-                🌙 Toggle Dark Mode
-            </button>
         </div>
     </nav>
 
@@ -53,88 +79,100 @@
         {% block content %}
         {% endblock %}
     </main>
+
     <footer class="bg-white dark:bg-gray-900">
         <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
             <div class="md:flex md:justify-between">
-              <div class="mb-6 md:mb-0">
-                  <a href="{% url 'blog_list' %}" class="flex items-center">
-                      <img src="{% static 'images/logo.png' %}" class="h-8 me-3" alt="Your Logo" />
-                      <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">SochSagar </span>
-                  </a>
-              </div>
-              <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
-                  <div>
-                      <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Resources</h2>
-                      <ul class="text-gray-500 dark:text-gray-400 font-medium">
-                          <li class="mb-4">
-                              <a href="https://flowbite.com/" class="hover:underline">Flowbite</a>
-                          </li>
-                          <li>
-                              <a href="https://tailwindcss.com/" class="hover:underline">Tailwind CSS</a>
-                          </li>
-                      </ul>
-                  </div>
-                  <div>
-                      <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Follow us</h2>
-                      <ul class="text-gray-500 dark:text-gray-400 font-medium">
-                          <li class="mb-4">
-                              <a href="https://github.com/Soubhagyajen" class="hover:underline ">Github</a>
-                          </li>
-                          <li>
-                              <a href="https://discord.gg/theopsj8351" class="hover:underline">Discord</a>
-                          </li>
-                      </ul>
-                  </div>
-                  <div>
-                      <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
-                      <ul class="text-gray-500 dark:text-gray-400 font-medium">
-                          <li class="mb-4">
-                              <a href="{% url 'blog_list' %}" class="hover:underline">Privacy Policy</a>
-                          </li>
-                          <li>
-                              <a href="{% url 'blog_list' %}" class="hover:underline">Terms &amp; Conditions</a>
-                          </li>
-                      </ul>
-                  </div>
-              </div>
-          </div>
-          <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-          <div class="sm:flex sm:items-center sm:justify-between">
-              <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <a href="{% url 'blog_list' %}" class="hover:underline">SochSagar™</a>. All Rights Reserved.
-              </span>
-              <div class="flex mt-4 sm:justify-center sm:mt-0">
-                  <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
-                      <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 8 19">
+                <div class="mb-6 md:mb-0">
+                    <a href="{% url 'blog_list' %}" class="flex items-center">
+                        <img src="{% static 'images/logo.png' %}" class="h-8 me-3" alt="Your Logo" />
+                        <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">SochSagar</span>
+                    </a>
+                </div>
+                <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Resources</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="https://flowbite.com/" class="hover:underline">Flowbite</a>
+                            </li>
+                            <li>
+                                <a href="https://tailwindcss.com/" class="hover:underline">Tailwind CSS</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Follow us</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="https://github.com/Soubhagyajen" class="hover:underline">Github</a>
+                            </li>
+                            <li>
+                                <a href="https://discord.gg/theopsj8351" class="hover:underline">Discord</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h2 class="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
+                        <ul class="text-gray-500 dark:text-gray-400 font-medium">
+                            <li class="mb-4">
+                                <a href="{% url 'blog_list' %}" class="hover:underline">Privacy Policy</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'blog_list' %}" class="hover:underline">Terms &amp; Conditions</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+            <div class="sm:flex sm:items-center sm:justify-between">
+                <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <a href="{% url 'blog_list' %}" class="hover:underline">SochSagar™</a>. All Rights Reserved.</span>
+                <div class="flex mt-4 sm:justify-center sm:mt-0">
+                    <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+                        <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 8 19">
                             <path fill-rule="evenodd" d="M6.135 3H8V0H6.135a4.147 4.147 0 0 0-4.142 4.142V6H0v3h2v9.938h3V9h2.021l.592-3H5V3.591A.6.6 0 0 1 5.592 3h.543Z" clip-rule="evenodd"/>
                         </svg>
-                      <span class="sr-only">Facebook page</span>
-                  </a>
-                  <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
-                      <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 21 16">
+                        <span class="sr-only">Facebook page</span>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
+                        <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 21 16">
                             <path d="M16.942 1.556a16.3 16.3 0 0 0-4.126-1.3 12.04 12.04 0 0 0-.529 1.1 15.175 15.175 0 0 0-4.573 0 11.585 11.585 0 0 0-.535-1.1 16.274 16.274 0 0 0-4.129 1.3A17.392 17.392 0 0 0 .182 13.218a15.785 15.785 0 0 0 4.963 2.521c.41-.564.773-1.16 1.084-1.785a10.63 10.63 0 0 1-1.706-.83c.143-.106.283-.217.418-.33a11.664 11.664 0 0 0 10.118 0c.137.113.277.224.418.33-.544.328-1.116.606-1.71.832a12.52 12.52 0 0 0 1.084 1.785 16.46 16.46 0 0 0 5.064-2.595 17.286 17.286 0 0 0-2.973-11.59Z"/>
                         </svg>
-                      <span class="sr-only">Discord community</span>
-                  </a>
-                  <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
-                      <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 17">
-                        <path fill-rule="evenodd" d="M20 1.892a8.178 8.178 0 0 1-2.355.635 4.074 4.074 0 0 0 1.8-2.235 8.344 8.344 0 0 1-2.605.98A4.13 4.13 0 0 0 13.85 0a4.068 4.068 0 0 0-4.1 4.038 4 4 0 0 0 .105.919A11.705 11.705 0 0 1 1.4.734a4.006 4.006 0 0 0 1.268 5.392 4.165 4.165 0 0 1-1.859-.5v.05A4.057 4.057 0 0 0 4.1 9.635a4.19 4.19 0 0 1-1.856.07 4.108 4.108 0 0 0 3.831 2.807A8.36 8.36 0 0 1 0 14.184 11.732 11.732 0 0 0 6.291 16 11.502 11.502 0 0 0 17.964 4.5Z" clip-rule="evenodd"/>
-                    </svg>
-                      <span class="sr-only">Twitter page</span>
-                  </a>
-              </div>
-          </div>
-        </div>
-    </footer>
-    <script>
-        function toggleDarkMode() {
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-        }
-
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
-
-</body>
+                        <span class="sr-only">Discord community</span>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
+                        <svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 17">
+                            <path fill-rule="evenodd" d="M20 1.892a8.178 8.178 0 0 1-2.355.648A4.115 4.115 0 0 0 19.443 0C18.448 0 17.356.826 17.061 1.869c-1.147-.626-2.387-.684-3.516-.15C12.059 2.719 11.335 4.527 11.06 6.437A12.276 12.276 0 0 0 8 4.726c.476 1.232-.187 2.681-1.434 2.938a2.547 2.547 0 0 1-3.527-2.456A4.3 4.3 0 0 0 3.71 6.71c-.142 2.38.869 4.727 2.625 6.14 2.66 2.017 5.7 2.417 8.32 1.14a5.577 5.577 0 0 1 5.41-1.11 7.908 7.908 0 0 1 1.163-5.838Z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="sr-only">Twitter page</span>
+                    </a>
+                </div>
+            </div>
+        </footer>
+        <script>
+            // Function to toggle dark mode
+            function toggleDarkMode() {
+                const currentTheme = localStorage.getItem('theme');
+                if (currentTheme === 'dark') {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            }
+        
+            // Apply the saved theme on page load
+            document.addEventListener('DOMContentLoaded', () => {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            });
+        </script>
+        
+    </body>
 </html>

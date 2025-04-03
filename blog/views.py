@@ -6,6 +6,8 @@ from .models import BlogPost, Comment, Poll
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.http import HttpResponse
+
 
 # Create your views here.
 
@@ -21,12 +23,28 @@ def create_blog(request):
         form = BlogPostForm(request.POST, request.FILES)
         if form.is_valid():
             blog_post = form.save(commit=False)  # Don't save yet
+            # if request.FILES.get('image'):
+            #     blog_post.image = request.FILES['image'].read()
             blog_post.author = request.user  # Assign the logged-in user
             blog_post.save()  # Now save with the correct author
             return redirect("blog_list")  # Redirect after saving
     else:
         form = BlogPostForm()
     return render(request, 'create_post.html', {"form": form})
+
+
+
+def display_image(request, id):
+    post = get_object_or_404(BlogPost, id=id)
+    if post.image:
+        # Check the content type (adjust based on image type)
+        content_type = "image/jpeg"  # Default
+        if post.image.startswith(b'\x89PNG\r\n\x1a\n'):  # Check if PNG
+            content_type = "image/png"
+        return HttpResponse(post.image, content_type=content_type)
+    return HttpResponse("No Image", content_type="text/plain")
+
+
 
 
 # List all blog posts

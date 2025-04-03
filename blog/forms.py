@@ -5,9 +5,10 @@ from django.contrib.auth.models import User
 
 
 class BlogPostForm(forms.ModelForm):
+    # image = forms.ImageField(required=False)
     class Meta:
         model = BlogPost
-        fields = ['title','content','image']
+        fields = ['title','content',]
         # widgets = {
         #     'title': forms.TextInput(attrs={'class': 'w-full p-2 border rounded'}),
         #     'content': forms.Textarea(attrs={'class': 'w-full p-2 border rounded h-40'}),

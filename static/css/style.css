@@ -3,3 +3,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.logo {
+    height: 50px; /* Adjust the height */
+    width: auto; /* Keep aspect ratio */
+}
+
