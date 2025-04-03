@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4751898656605765"
      crossorigin="anonymous"></script>
+     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <title>{% block title %}SochSagar {% endblock %}</title>
 
     {% tailwind_css %}
@@ -171,6 +173,29 @@
                 } else {
                     document.documentElement.classList.remove('dark');
                 }
+            });
+            document.addEventListener("DOMContentLoaded", function () {
+                let currentIndex = 0;
+                const slides = document.querySelectorAll(".carousel-slide");
+                const totalSlides = slides.length;
+            
+                function showSlide(index) {
+                    slides.forEach((slide, i) => {
+                        slide.classList.toggle("hidden", i !== index);
+                    });
+                }
+            
+                document.getElementById("nextSlide").addEventListener("click", function () {
+                    currentIndex = (currentIndex + 1) % totalSlides;
+                    showSlide(currentIndex);
+                });
+            
+                document.getElementById("prevSlide").addEventListener("click", function () {
+                    currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+                    showSlide(currentIndex);
+                });
+            
+                showSlide(currentIndex);
             });
         </script>
         
