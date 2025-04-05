@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.http import HttpResponse
-
+from django.db.models import Q
 
 # Create your views here.
 
@@ -119,16 +119,23 @@ def blog_detail(request, id):
 
 
 # Like a blog post
-def like_post(request, id):
-    post = get_object_or_404(BlogPost, id=id)
-    if request.user in post.likes.all():
-        post.likes.remove(request.user)
-        liked = False
-    else:
-        post.likes.add(request.user)
-        liked = True
-    return JsonResponse({"likes": post.likes.count(), "liked": liked})
+def like_post(request, post_id):
+    post = get_object_or_404(BlogPost, id=post_id)
 
+    if request.user.is_authenticated:
+        if request.user in post.likes.all():
+            post.likes.remove(request.user)  # Remove the like
+            liked = False
+        else:
+            post.likes.add(request.user)  # Add the like
+            liked = True
+
+        # Return the updated like count and liked status as JSON
+        return JsonResponse({
+            'likes': post.total_likes(),
+            'liked': liked
+        })
+    return JsonResponse({'error': 'User not authenticated'}, status=401)
 
 # Poll voting view
 def poll_vote(request, poll_id):
@@ -145,7 +152,15 @@ def poll_vote(request, poll_id):
 
     return render(request, 'poll.html', {'poll': poll})
 
+def search_posts(request):
+    query = request.GET.get('q', '')  # Get the search query from the request
+    posts = BlogPost.objects.all()
 
+    if query:
+        # Filter posts by title (case insensitive)
+        posts = posts.filter(title__icontains=query)
+
+    return render(request, 'post.html', {'posts': posts})
 
 def about(request):
     return render(request, 'about.html')

@@ -27,7 +27,7 @@
     <div class="mt-6">
         <button id="like-btn" data-post-id="{{ post.id }}" class="relative inline-flex items-center justify-center p-2 mb-4 text-sm font-medium text-gray-900 rounded-lg bg-gradient-to-br from-green-400 to-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 dark:text-white">
             <span class="relative px-4 py-2.5 bg-white dark:bg-gray-900 rounded-md">
-                👍 Like (<span id="like-count">{{ post.likes.count }}</span>)
+                👍 Like (<span id="like-count">{{ post.total_likes }}</span>)
             </span>
         </button>
     </div>
@@ -54,28 +54,32 @@
 
     <!-- Comments Section -->
     <div class="mt-8">
-        <h3 class="text-2xl font-semibold">💬 Comments</h3>
-        {% for comment in comments %}
-            <div class="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md">
-                <p class="font-semibold text-gray-900 dark:text-gray-200">{{ comment.user }}</p>
-                <p class="text-gray-700 dark:text-gray-300">{{ comment.content }}</p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{{ comment.created_at }}</p>
-            </div>
-        {% empty %}
-            <p class="text-gray-500">No comments yet.</p>
-        {% endfor %}
+        <h3 class="text-2xl font-semibold text-gray-900 dark:text-white">💬 Comments</h3>
+    {% for comment in comments %}
+        <div class="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
+            <p class="font-semibold text-gray-900 dark:text-white">{{ comment.user }}</p>
+            <p class="text-gray-800 dark:text-gray-100">{{ comment.content }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ comment.created_at }}</p>
+        </div>
+    {% empty %}
+        <p class="text-gray-500 dark:text-gray-300">No comments yet.</p>
+    {% endfor %}
 
         <!-- Comment Form -->
         {% if user.is_authenticated %}
-            <form method="post" class="mt-4">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="relative inline-flex items-center justify-center p-2 text-sm font-medium text-gray-900 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-purple-600 dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800">
-                    <span class="relative px-4 py-2.5 bg-white dark:bg-gray-900 rounded-md">
-                        ➕ Add Comment
-                    </span>
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {{ form.as_p|safe }}
+                <button type="submit" 
+                    class="inline-flex items-center px-6 py-3 text-white text-sm font-semibold bg-gradient-to-br from-purple-600 to-blue-500 rounded-lg shadow-md hover:from-purple-700 hover:to-blue-600 focus:outline-none focus:ring-4 focus:ring-purple-300 dark:focus:ring-blue-800 transition">
+                    ➕ Add Comment
                 </button>
-            </form>
+            </div>
+        </form>
+        
+        
+        
         {% else %}
             <p class="mt-4 text-gray-500">You must be logged in to add a comment.</p>
         {% endif %}
@@ -84,18 +88,53 @@
 </div>
 
 <!-- Like Button JavaScript -->
+<!-- Like Button JavaScript -->
 <script>
-document.getElementById("like-btn").addEventListener("click", function() {
-    var postId = this.getAttribute("data-post-id");
-
-    fetch(`/like/${postId}/`, {
-        method: "POST",
-        headers: {"X-CSRFToken": "{{ csrf_token }}" }
-    }).then(response => response.json())
-    .then(data => {
-        document.getElementById("like-count").innerText = data.likes;
+    // ✅ Get CSRF token for AJAX requests
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+    
+    // ✅ Like Button Event Listener
+    document.getElementById("like-btn").addEventListener("click", function () {
+        var postId = this.getAttribute("data-post-id");
+    
+        fetch(`/like/${postId}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            credentials: "same-origin"
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update the like count dynamically
+            document.getElementById("like-count").innerText = data.likes;
+    
+            // Optional UI feedback
+            if (data.liked) {
+                this.classList.add("ring", "ring-green-400");
+            } else {
+                this.classList.remove("ring", "ring-green-400");
+            }
+        });
     });
-});
 </script>
+
+
+    
 
 {% endblock %}

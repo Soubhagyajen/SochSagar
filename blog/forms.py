@@ -45,6 +45,11 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'w-full p-2 border rounded dark:bg-gray-700 dark:text-white'
+            }),
+        }
 
 
 class PollForm(forms.ModelForm):

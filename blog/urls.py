@@ -22,6 +22,8 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path("about/", views.about, name="about"),
     path('image/<int:post_id>/', display_image, name='display_image'),
+     path('like/<int:post_id>/', views.like_post, name='like_post'),
+      path('search/', views.search_posts, name='search_posts'),
 ]
 
 if settings.DEBUG:
